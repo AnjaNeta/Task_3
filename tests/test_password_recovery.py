@@ -16,7 +16,7 @@ class TestPasswordRecovery:
         main_page.click_personal_account_button()
         login_page.click_forgot_password_link()
         
-        assert "forgot-password" in driver.current_url
+        assert main_page.is_url_contains("forgot-password"), "Не выполнен переход на страницу восстановления пароля"
 
     @allure.title('Ввод почты и клик по кнопке "Восстановить"')
     def test_restore_password_with_email(self, driver):
@@ -32,9 +32,7 @@ class TestPasswordRecovery:
         forgot_password_page.enter_email(user_data["email"])
         forgot_password_page.click_restore_button()
         
-        main_page.wait_for_url_contains("reset-password")
-        
-        assert "reset-password" in driver.current_url
+        assert main_page.is_url_contains("reset-password"), "Не выполнен переход на страницу сброса пароля"
 
     @allure.title('Клик по кнопке показа/скрытия пароля делает поле активным')
     def test_show_password_button_activates_field(self, driver):
@@ -50,13 +48,11 @@ class TestPasswordRecovery:
         forgot_password_page.enter_email(user_data["email"])
         forgot_password_page.click_restore_button()
         
-        # Ждём загрузки страницы сброса пароля
-        main_page.wait_for_url_contains("reset-password")
+        assert main_page.is_url_contains("reset-password"), "Не выполнен переход на страницу сброса пароля"
         
         # Проверяем, что кнопка показа пароля работает
         forgot_password_page.click_show_password_button()
         
         # Проверяем, что поле пароля стало активным (можно вводить)
-        assert forgot_password_page.is_password_field_active()
+        assert forgot_password_page.is_password_field_active(), "Поле пароля не стало активным после клика по кнопке показа"
 
-        

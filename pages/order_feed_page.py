@@ -10,8 +10,7 @@ class OrderFeedPage(BasePage):
     @allure.step("Кликнуть на первый заказ в ленте")
     def click_first_order(self):
         order_card = self.wait.until(EC.element_to_be_clickable(OrderFeedPageLocators.ORDER_CARD))
-        self.driver.execute_script("arguments[0].scrollIntoView(true);", order_card)
-        order_card.click()
+        self.click_js(order_card)
         print("Клик по первому заказу выполнен")
     
     @allure.step("Получить счётчик 'Выполнено за всё время'")
@@ -23,7 +22,13 @@ class OrderFeedPage(BasePage):
     def get_today_counter(self):
         element = self.wait.until(EC.visibility_of_element_located(OrderFeedPageLocators.TODAY_COUNTER))
         return int(element.text)
-    
+    allure.step("Ожидать увеличения счётчика 'Выполнено за сегодня'")
+    def wait_for_today_counter_increase(self, initial_counter, timeout=15):
+        def counter_increased(driver):
+            current = self.get_today_counter()
+            return current > initial_counter
+        WebDriverWait(self.driver, timeout).until(counter_increased)
+
     def normalize_order_number(self, order_number):
         """Нормализует номер заказа (добавляет ведущий ноль до 6 цифр)."""
         return str(order_number).zfill(6)
@@ -34,7 +39,7 @@ class OrderFeedPage(BasePage):
         self.wait.until(EC.presence_of_all_elements_located(OrderFeedPageLocators.ORDER_NUMBER_IN_FEED))
         
         # Получаем все номера заказов
-        order_elements = self.driver.find_elements(*OrderFeedPageLocators.ORDER_NUMBER_IN_FEED)
+        order_elements = self.find_elements(OrderFeedPageLocators.ORDER_NUMBER_IN_FEED)
         
         # Проверяем, есть ли нужный номер
         for element in order_elements:
@@ -52,7 +57,7 @@ class OrderFeedPage(BasePage):
         self.wait.until(EC.presence_of_element_located(OrderFeedPageLocators.ORDERS_IN_PROGRESS))
         
         # Получаем все заказы в работе
-        orders_in_progress = self.driver.find_elements(*OrderFeedPageLocators.ORDERS_IN_PROGRESS)
+        orders_in_progress = self.find_elements(OrderFeedPageLocators.ORDERS_IN_PROGRESS)
         
         # Проверяем, есть ли наш номер заказа
         for order in orders_in_progress:
@@ -65,4 +70,3 @@ class OrderFeedPage(BasePage):
     def get_order_number_from_details(self):
         return self.get_text(OrderDetailsLocators.ORDER_NUMBER)
 
-        

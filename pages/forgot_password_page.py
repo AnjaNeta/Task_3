@@ -20,7 +20,7 @@ class ForgotPasswordPage(BasePage):
     def click_show_password_button(self):
         # Ждём, пока кнопка станет кликабельной
         button = self.wait.until(EC.element_to_be_clickable(ForgotPasswordPageLocators.SHOW_PASSWORD_BUTTON))
-        button.click()
+        self.click_js(button)
     
     @allure.step("Проверить, что поле пароля стало активным")
     def is_password_field_active(self):
@@ -28,4 +28,3 @@ class ForgotPasswordPage(BasePage):
         element = self.wait.until(EC.visibility_of_element_located(ForgotPasswordPageLocators.NEW_PASSWORD_FIELD))
         return element.is_enabled()
 
-        

@@ -20,12 +20,7 @@ class PersonalAccountPage(BasePage):
     def click_logout_button(self):
     # Ждём, пока кнопка станет кликабельной
         logout_button = self.wait.until(EC.element_to_be_clickable(PersonalAccountPageLocators.LOGOUT_BUTTON))
-    
-    # Скроллим к кнопке
-        self.driver.execute_script("arguments[0].scrollIntoView(true);", logout_button)
-    
-    # Кликаем через JavaScript
-        self.driver.execute_script("arguments[0].click();", logout_button)
+        self.click_js(logout_button)
 
 
 

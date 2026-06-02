@@ -60,21 +60,17 @@ def pytest_addoption(parser):
 def driver(request):
     browser = request.config.getoption("--browser")
     
-    # Добавляем информацию о браузере в Allure-отчёт
     allure.dynamic.parameter("Browser", browser)
     allure.dynamic.label("browser", browser)
     allure.dynamic.tag(browser)
     
-    print(f"\n🚀 Запускаем браузер: {browser}")
     
     driver = WebDriverFactory.get_driver(browser)
     driver.get(BASE_URL)
     driver.delete_all_cookies()
-    print(f"✅ Открыта страница {BASE_URL}")
-    
+
     yield driver
     
-    print(f"🔒 Закрываем браузер {browser}")
     driver.quit()
 
 
@@ -85,39 +81,35 @@ def wait(driver):
 
 
 @pytest.fixture
-def registered_and_logged_in_user(driver):
-    """Фикстура:
-    1. Регистрация пользователя через API
-    2. Вход через UI
-    """
-    # 1. РЕГИСТРАЦИЯ ЧЕРЕЗ API
+def registered_user():
+    """Фикстура: создаёт пользователя через API и возвращает его данные."""
     user_data = generate_random_user()
     response = requests.post(API_REGISTER_URL, json=user_data)
     
     if response.status_code != 200:
         raise Exception(f"Не удалось создать пользователя через API: {response.text}")
     
-    print(f"✅ Пользователь создан через API: {user_data['email']}")
-    
-    # 2. ВХОД ЧЕРЕЗ UI
-    main_page = MainPage(driver)
-    login_page = LoginPage(driver)
-    
-    main_page.click_personal_account_button()
-    main_page.wait_for_url_contains("login")
-    login_page.login(user_data["email"], user_data["password"])
-    main_page.wait_for_url_contains(BASE_URL)
-    
-    print(f"✅ Пользователь авторизован через UI: {user_data['email']}")
-    
     yield user_data
     
-    # 3. УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЯ
     login_response = requests.post(API_LOGIN_URL, json={"email": user_data["email"], "password": user_data["password"]})
     if login_response.status_code == 200:
         access_token = login_response.json().get('accessToken')
         if access_token:
             delete_user(access_token)
-            print(f"🗑️ Пользователь {user_data['email']} удалён")
-
             
+
+
+@pytest.fixture
+def logged_in_user(driver, registered_user):
+    """Фикстура: выполняет вход через UI для созданного пользователя."""
+    main_page = MainPage(driver)
+    login_page = LoginPage(driver)
+    
+    main_page.click_personal_account_button()
+    main_page.wait_for_url_contains("login")
+    login_page.login(registered_user["email"], registered_user["password"])
+    main_page.wait_for_url_contains(BASE_URL)
+    
+    
+    return registered_user
+
