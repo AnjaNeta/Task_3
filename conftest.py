@@ -17,7 +17,7 @@ class WebDriverFactory:
     @staticmethod
     def get_driver(browser_name):
         driver = None
-        
+
         if browser_name == "chrome":
             options = ChromeOptions()
             options.add_argument('--disable-blink-features=AutomationControlled')
@@ -26,7 +26,6 @@ class WebDriverFactory:
             options.add_argument('--disable-search-engine-choice-screen')
             driver = webdriver.Chrome(options=options)
             driver.set_page_load_timeout(15)
-            return driver
         
         elif browser_name == "firefox":
             options = FirefoxOptions()
