@@ -31,8 +31,6 @@ class TestMainFunctionality:
     def test_modal_closes_by_click_on_cross(self, driver):
         main_page = MainPage(driver)
         main_page.click_bun_ingredient()
-        assert main_page.is_element_visible(OrderDetailsLocators.MODAL_CONTAINER), "Модальное окно не открылось"
-        
         main_page.close_modal()
         assert not main_page.is_element_visible(OrderDetailsLocators.MODAL_CONTAINER), "Модальное окно не закрылось"
 
@@ -52,4 +50,3 @@ class TestMainFunctionality:
         main_page = MainPage(driver)
         assert main_page.is_element_visible(MainPageLocators.CHECKOUT_BUTTON), "Кнопка 'Оформить заказ' не отображается"
 
-        

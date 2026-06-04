@@ -51,16 +51,8 @@ class TestOrderFeed:
         main_page.close_order_modal()
         
         main_page.click_order_feed_button()
-        
-        def counter_increased(driver):
-            current = order_feed_page.get_all_time_counter()
-            print(f"Current all time counter: {current}")
-            return current > initial_counter
-        
-        main_page.wait.until(counter_increased)
-        
-        final_counter = order_feed_page.get_all_time_counter()
-        assert final_counter > initial_counter, f"Счётчик 'Выполнено за всё время' не увеличился: {initial_counter} -> {final_counter}"
+        assert order_feed_page.is_all_time_counter_increased(initial_counter), "Счётчик 'Выполнено за всё время' не увеличился"
+    
 
     @allure.title('При создании заказа счётчик "Выполнено за сегодня" увеличивается')
     def test_today_counter_increases(self, driver, logged_in_user):
@@ -79,16 +71,7 @@ class TestOrderFeed:
         main_page.close_order_modal()
         
         main_page.click_order_feed_button()
-        
-        def counter_increased(driver):
-            current = order_feed_page.get_today_counter()
-            print(f"Current today counter: {current}")
-            return current > initial_counter
-        
-        main_page.wait.until(counter_increased)
-        
-        final_counter = order_feed_page.get_today_counter()
-        assert final_counter > initial_counter, f"Счётчик 'Выполнено за сегодня' не увеличился: {initial_counter} -> {final_counter}"
+        assert order_feed_page.is_today_counter_increased(initial_counter), "Счётчик 'Выполнено за сегодня' не увеличился"
 
     @allure.title('После оформления заказа его номер появляется в разделе "В работе"')
     def test_order_number_appears_in_progress(self, driver, logged_in_user):

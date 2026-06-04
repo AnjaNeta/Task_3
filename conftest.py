@@ -16,6 +16,8 @@ class WebDriverFactory:
     
     @staticmethod
     def get_driver(browser_name):
+        driver = None
+        
         if browser_name == "chrome":
             options = ChromeOptions()
             options.add_argument('--disable-blink-features=AutomationControlled')
@@ -40,11 +42,11 @@ class WebDriverFactory:
             
             driver = webdriver.Firefox(options=options)
             driver.set_page_load_timeout(15)
-            return driver
-        
+
         else:
             raise ValueError(f"Unsupported browser: {browser_name}")
-
+        
+        return driver
 
 def pytest_addoption(parser):
     parser.addoption(

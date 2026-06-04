@@ -28,3 +28,4 @@ class ForgotPasswordPage(BasePage):
         element = self.wait.until(EC.visibility_of_element_located(ForgotPasswordPageLocators.NEW_PASSWORD_FIELD))
         return element.is_enabled()
 
+
